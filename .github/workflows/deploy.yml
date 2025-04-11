@@ -18,6 +18,11 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ${{ secrets.EC2_PATH }}
-            sudo git pull
+            if sudo [ -d "${{ secrets.EC2_PATH }}/.git" ]; then
+              echo "Directory exists, pulling latest changes..."
+              sudo git -C ${{ secrets.EC2_PATH }} pull
+            else
+              echo "Directory does not exist, cloning repository..."
+              sudo git clone ${{ github.repositoryUrl }} ${{ secrets.EC2_PATH }}
+            fi
             echo "Deployment completed"
