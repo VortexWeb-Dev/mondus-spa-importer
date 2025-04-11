@@ -239,7 +239,10 @@
             }
 
             const fields = result.result.fields || {};
-            const titles = Object.values(fields).map((field) => field.title);
+            const titles = Object.entries(fields).map(([key, field]) => ({
+              id: key,
+              title: field.title,
+            }));
             return titles;
           } catch (error) {
             helpers.showAlert(`Failed to load SPA fields: ${error.message}`);
@@ -251,6 +254,7 @@
         },
 
         async importItem(spaId, item) {
+          console.log("Importing item:", item);
           try {
             const response = await fetch(
               `${API_URL}/crm.item.add?entityTypeId=${spaId}`,
@@ -297,19 +301,19 @@
           }
 
           state.spaFields.forEach((field) => {
-            let selectHTML = `<select class="w-full p-2 border rounded-xl shadow" data-field="${field}">
+            let selectHTML = `<select class="w-full p-2 border rounded-xl shadow" data-field="${field.id}">
             <option value="">-- Map to CSV --</option>`;
             state.csvHeaders.forEach((header) => {
               // Auto-map fields with the same name
               const selected =
-                header.toLowerCase() === field.toLowerCase() ? "selected" : "";
+                header.toLowerCase() === field.title.toLowerCase() ? "selected" : "";
               selectHTML += `<option value="${header}" ${selected}>${header}</option>`;
             });
             selectHTML += "</select>";
 
             elements.mappingFields.innerHTML += `
             <div>
-              <label class="block font-medium mb-1">${field}</label>
+              <label class="block font-medium mb-1">${field.title}</label>
               ${selectHTML}
             </div>`;
           });
