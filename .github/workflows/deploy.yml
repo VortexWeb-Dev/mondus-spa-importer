@@ -23,6 +23,6 @@ jobs:
               sudo git -C ${{ secrets.EC2_PATH }} pull
             else
               echo "Directory does not exist, cloning repository..."
-              sudo git clone ${{ github.REPO_URL }} ${{ secrets.EC2_PATH }}
+              sudo git clone ${{ secrets.REPO_URL }} ${{ secrets.EC2_PATH }}
             fi
             echo "Deployment completed"
